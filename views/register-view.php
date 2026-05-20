@@ -36,16 +36,11 @@
                     <div class="card bg-glass">
                         <div class="card-body px-4 py-5 px-md-5">
                             <form action="<?= site_url('auth.php?action=register') ?>" method="post">
+                                
                                 <!-- Name input -->
                                 <div class="form-outline mb-4">
                                     <input type="text" name="name" id="name" class="form-control" />
                                     <label class="form-label" for="name">Name</label>
-                                </div>
-
-                                <!-- Phone input -->
-                                <div class="form-outline mb-4">
-                                    <input type="text" name="phone" id="phone" class="form-control" />
-                                    <label class="form-label" for="phone">Phone</label>
                                 </div>
 
                                 <!-- Email input -->
@@ -54,6 +49,12 @@
                                     <label class="form-label" for="email">Email address</label>
                                 </div>
 
+                                <!-- Phone input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" name="phone" id="phone" class="form-control" />
+                                    <label class="form-label" for="phone">Phone</label>
+                                </div>
+                                
                                 <!-- Checkbox -->
                                 <div class="form-check d-flex justify-content-center mb-4">
                                     <input class="form-check-input me-2" type="checkbox" value="" id="remember-me"

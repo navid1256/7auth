@@ -14,17 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!filter_var($params['email'], FILTER_VALIDATE_EMAIL)) {
             setErrorAndRedirect('Invalid email format.', 'auth.php?action=register');
         }
-        if (!preg_match('/^\[0-9]]$/', $params['phone'])) {
-            setErrorAndRedirect('Only digits are allowed in the phone number.', 'auth.php?action=register');
+        if (!preg_match('/^[0-9]{10}$/', $params['phone'])) {
+            setErrorAndRedirect('Phone number must be 10 digits.', 'auth.php?action=register');
         }
-        // Here you would typically save the user to the database
-        setErrorAndRedirect('Registration successful! Please login.', 'auth.php?action=login');
+        if (isUserExists($params['email'], $params['phone'])) {
+            setErrorAndRedirect('User with this email or phone already exists.', 'auth.php?action=register');
+        }
+        if(createUser($params)){
+            setSuccessAndRedirect('Registration successful! Please login.', 'auth.php?action=login');
+        } else {
+            setErrorAndRedirect('Registration failed. Please try again.', 'auth.php?action=register');
+        }
     } elseif ($action == 'login') {
         if (empty($params['email'])) {
             setErrorAndRedirect('Email is required.', 'auth.php?action=login');
         }
         // Here you would typically check the user's credentials against the database
-        setErrorAndRedirect('Login successful! Welcome back.', 'auth.php?action=login');
+        setSuccessAndRedirect('Login successful! Welcome back.', 'auth.php?action=login');
     } else {
         setErrorAndRedirect('Invalid action.', 'auth.php');
     }

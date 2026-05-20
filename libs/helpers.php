@@ -20,3 +20,9 @@ function setErrorAndRedirect(string $message, string $url): void
     $_SESSION['error'] = $message;
     redirect(site_url($url));
 }
+
+function setSuccessAndRedirect(string $message, string $url): void
+{
+    $_SESSION['success'] = $message;
+    redirect(site_url($url));
+}
