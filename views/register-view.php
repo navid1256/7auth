@@ -21,6 +21,12 @@
                         7Learn Auth <br />
                         <span style="color: hsl(218, 81%, 75%)">Register Page</span>
                     </h1>
+                    <?php if (!empty($_SESSION['error'])): ?>
+                        <div class="alert alert-danger" role="alert">
+                            <?= $_SESSION['error'] ?>
+                        </div>
+                        <?php unset($_SESSION['error']); ?>
+                    <?php endif; ?>
                 </div>
 
                 <div class="col-lg-6 mb-5 mb-lg-0 position-relative">
@@ -29,7 +35,7 @@
 
                     <div class="card bg-glass">
                         <div class="card-body px-4 py-5 px-md-5">
-                            <form action="<?= site_url('register.php') ?>" method="post">
+                            <form action="<?= site_url('auth.php?action=register') ?>" method="post">
                                 <!-- Name input -->
                                 <div class="form-outline mb-4">
                                     <input type="text" name="name" id="name" class="form-control" />
