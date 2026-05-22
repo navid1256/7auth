@@ -1,5 +1,6 @@
 <?php
 
+use Symfony\Component\Mime\Part\Multipart\AlternativePart;
 
 include "bootstrap/init.php";
 
@@ -20,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isUserExists($params['email'], $params['phone'])) {
             setErrorAndRedirect('User with this email or phone already exists.', 'auth.php?action=register');
         }
-        if(createUser($params)){
+        if (createUser($params)) {
             setSuccessAndRedirect('Registration successful! Please login.', 'auth.php?action=login');
         } else {
             setErrorAndRedirect('Registration failed. Please try again.', 'auth.php?action=register');
@@ -34,6 +35,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         setErrorAndRedirect('Invalid action.', 'auth.php');
     }
+}
+
+if (isset($_GET['action']) && $_GET['action'] == 'verify' && isset($_GET['token']) && !empty($_SESSION['email'])) {
+    if(isUserExists($_SESSION['email'], '')) {
+        setSuccessAndRedirect('Email verification successful! You can now login.', 'auth.php?action=login');
+    } else {
+        setErrorAndRedirect('Invalid verification token.', 'auth.php');
+    }
+    if(isset($_SESSION['token']) && isAliveToken($_SESSION['token'])) {
+        setSuccessAndRedirect('Token is valid! You can now login.', 'auth.php?action=login');
+    } else {
+        setErrorAndRedirect('Invalid or expired token.', 'auth.php');
+    }
+    $tokenResault = generateToken();
+// Here you would typically destroy the user's session
+    include 'views/verify-view.php';
 }
 
 if (isset($_GET['action']) && $_GET['action'] == 'register') {
