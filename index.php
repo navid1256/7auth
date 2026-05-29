@@ -1,3 +1,9 @@
+<?php
+require 'bootstrap/init.php';
+if (!isLoggedIn()) {
+    redirect('auth.php?action=login');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

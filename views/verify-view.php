@@ -29,16 +29,32 @@
 
                     <div class="card bg-glass">
                         <div class="card-body px-4 py-5 px-md-5">
-                            <form action="<?= site_url('verify.php') ?>" method="post">
+                            <?php if (!empty($_SESSION['error'])): ?>
+                                <div class="alert alert-danger" role="alert">
+                                    <?= $_SESSION['error'] ?>
+                                </div>
+                                <?php unset($_SESSION['error']); ?>
+                            <?php endif; ?>
+                            <form action="<?= site_url('auth.php?action=verify') ?>" method="post">
                                 <!-- Token input -->
                                 <div class="form-outline mb-4">
-                                    <input type="text" name="token" id="token" class="form-control" />
-                                    <label class="form-label" for="token">Enter Token</label>
+                                    <input type="text" name="token" id="token" class="form-control" required />
+                                    <label class="form-label" for="token">Enter Verification Token</label>
                                 </div>
                                 <!-- Submit button -->
                                 <button type="submit" class="btn btn-primary btn-block mb-4">
-                                    Submit
+                                    Verify Token
                                 </button>
+                                <hr>
+                                <p>Check your email for the verification token. It will expire in 5 minutes.</p>
+                                <button type="button" id="sendAgainBtn" class="btn btn-outline-primary btn-block">
+                                    <span id="btnText">Send Again</span>
+                                    <span id="btnLoader" style="display:none;">
+                                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                        Sending...
+                                    </span>
+                                </button>
+                                <div id="resendMessage" class="mt-2" style="display:none;"></div>
                             </form>
                         </div>
                     </div>
@@ -47,6 +63,49 @@
         </div>
     </section>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.js"></script>
+    <script>
+        document.getElementById('sendAgainBtn').addEventListener('click', function() {
+            var btnText = document.getElementById('btnText');
+            var btnLoader = document.getElementById('btnLoader');
+            var messageDiv = document.getElementById('resendMessage');
+            var btn = this;
+
+            // Disable button and show loader
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-block';
+            messageDiv.style.display = 'none';
+
+            fetch('auth.php?action=resend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    messageDiv.style.display = 'block';
+                    if (data.success) {
+                        messageDiv.className = 'mt-2 alert alert-success';
+                        messageDiv.textContent = data.message;
+                    } else {
+                        messageDiv.className = 'mt-2 alert alert-danger';
+                        messageDiv.textContent = data.message;
+                    }
+                })
+                .catch(error => {
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'mt-2 alert alert-danger';
+                    messageDiv.textContent = 'An error occurred. Please try again.';
+                })
+                .finally(() => {
+                    // Re-enable button
+                    btn.disabled = false;
+                    btnText.style.display = 'inline-block';
+                    btnLoader.style.display = 'none';
+                });
+        });
+    </script>
 </body>
 
 </html>
