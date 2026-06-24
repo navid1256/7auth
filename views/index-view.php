@@ -1,12 +1,7 @@
 <?php
 
 $userData = $userData ?? null;
-
-if (!$userData) {
-    redirect('auth.php?action=login');
-}
-
-$displayName = htmlspecialchars(($userData->name ?? '') ?: ($userData->email ?? 'User'));
+$displayName = $userData ? htmlspecialchars(($userData->name ?? '') ?: ($userData->email ?? 'User')) : '';
 ?>
 
 <!DOCTYPE html>
@@ -16,67 +11,58 @@ $displayName = htmlspecialchars(($userData->name ?? '') ?: ($userData->email ?? 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>7Auth - Home</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="<?= assets('css/styles.css') ?>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .main-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-        }
-
-        .main-card h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .main-card p {
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .action-buttons .btn {
-            min-width: 140px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div class="main-card">
-        <?php if (!empty($_SESSION['success'])): ?>
-            <div class="alert alert-success" role="alert">
-                <?= htmlspecialchars($_SESSION['success']) ?>
-            </div>
-            <?php unset($_SESSION['success']); ?>
-        <?php endif; ?>
+    <section class="background-radial-gradient overflow-hidden">
+        <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+            <div class="row gx-lg-5 align-items-center mb-5 justify-content-center">
+                <div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 10">
+                    <h1 class="my-5 display-5 fw-bold ls-tight" style="color: hsl(218, 81%, 95%)">
+                        7Learn Auth <br />
+                        <span style="color: hsl(218, 81%, 75%)">Home Page</span>
+                    </h1>
+                </div>
 
-        <h1>Welcome, <?= $displayName ?>!</h1>
-        <p>You are successfully logged in.</p>
-        <div class="action-buttons">
-            <a href="<?= site_url('logout.php') ?>" class="btn btn-outline-danger">
-                <i class="fas fa-sign-out-alt me-1"></i> Logout
-            </a>
+                <div class="col-lg-6 mb-5 mb-lg-0 position-relative">
+                    <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
+                    <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
+
+                    <div class="card bg-glass">
+                        <div class="card-body px-4 py-5 px-md-5 text-center">
+                            <?php if (!empty($_SESSION['success'])): ?>
+                                <div class="alert alert-success" role="alert">
+                                    <?= htmlspecialchars($_SESSION['success']) ?>
+                                </div>
+                                <?php unset($_SESSION['success']); ?>
+                            <?php endif; ?>
+
+                            <?php if ($userData): ?>
+                                <h2 class="fw-bold mb-3">Welcome, <?= $displayName ?>!</h2>
+                                <p class="text-muted mb-4">You are successfully logged in.</p>
+                                <a href="<?= site_url('logout.php') ?>" class="btn btn-outline-danger btn-block">
+                                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                                </a>
+                            <?php else: ?>
+                                <h2 class="fw-bold mb-3">Welcome to 7Auth!</h2>
+                                <p class="text-muted mb-4">Please login or register to continue.</p>
+                                <a href="<?= site_url('auth.php?action=login') ?>" class="btn btn-primary btn-block mb-3">
+                                    <i class="fas fa-sign-in-alt me-1"></i> Login
+                                </a>
+                                <a href="<?= site_url('auth.php?action=register') ?>" class="btn btn-success btn-block">
+                                    <i class="fas fa-user-plus me-1"></i> Register
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.js"></script>
 </body>
