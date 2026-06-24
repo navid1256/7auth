@@ -23,7 +23,7 @@
                     </h1>
                     <?php if (!empty($_SESSION['error'])): ?>
                         <div class="alert alert-danger" role="alert">
-                            <?= $_SESSION['error'] ?>
+                            <?= htmlspecialchars($_SESSION['error']) ?>
                         </div>
                         <?php unset($_SESSION['error']); ?>
                     <?php endif; ?>

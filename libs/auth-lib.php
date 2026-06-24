@@ -3,9 +3,17 @@
 function isUserExists(string $email, string $phone): bool
 {
     global $pdo;
+    if ($phone === '') {
+        $sql = "SELECT * FROM users WHERE email = :email";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['email' => $email]);
+        $record = $stmt->fetch(PDO::FETCH_OBJ);
+        return $record !== false;
+    }
+
     $sql = "SELECT * FROM users WHERE email = :email OR phone = :phone";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute(['email' => $email ?? '', 'phone' => $phone ?? '']);
+    $stmt->execute(['email' => $email, 'phone' => $phone]);
     $record = $stmt->fetch(PDO::FETCH_OBJ);
     return $record !== false;
 }
@@ -81,6 +89,12 @@ function sendTokenByMail(string $email, string|int $token): bool
 function changeLogginSession(string $session, string $email): bool
 {
     global $pdo;
+    // Delete any existing session for this user to prevent multiple logins
+    $deleteSql = 'UPDATE `users` SET `session` = NULL WHERE `email` = :email';
+    $deleteStmt = $pdo->prepare($deleteSql);
+    $deleteStmt->execute([':email' => $email]);
+
+    // Set the new session for this user
     $sql = 'UPDATE `users` SET `session` = :session WHERE `email` = :email';
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':session' => $session, ':email' => $email]);
@@ -112,4 +126,29 @@ function isLoggedIn(): bool
         return $user !== null;
     }
     return false;
+}
+
+function deleteExpiredTokens():bool
+{
+    global $pdo;
+    $sql = 'DELETE FROM `tokens` WHERE expired_at < now();';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->rowCount();
+}
+
+function logout(string $email): bool
+{
+    global $pdo;
+    // Clear the session for the user
+    $sql = 'UPDATE `users` SET `session` = NULL WHERE `email` = :email';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':email' => $email]);
+
+    // Clear the auth session cookie
+    if (isset($_COOKIE['session'])) {
+        setcookie('session', '', time() - 3600, '/');
+    }
+
+    return $stmt->rowCount() ? true : false;
 }

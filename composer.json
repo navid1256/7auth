@@ -1,4 +1,7 @@
 {
+    "name": "7learn/7auth",
+    "description": "A simple email token authentication project.",
+    "license": "proprietary",
     "require": {
         "phpmailer/phpmailer": "^7.1"
     }

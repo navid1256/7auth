@@ -23,9 +23,15 @@
                     </h1>
                     <?php if (!empty($_SESSION['error'])): ?>
                         <div class="alert alert-danger" role="alert">
-                            <?= $_SESSION['error'] ?>
+                            <?= htmlspecialchars($_SESSION['error']) ?>
                         </div>
                         <?php unset($_SESSION['error']); ?>
+                    <?php endif; ?>
+                    <?php if (!empty($_SESSION['success'])): ?>
+                        <div class="alert alert-success" role="alert">
+                            <?= htmlspecialchars($_SESSION['success']) ?>
+                        </div>
+                        <?php unset($_SESSION['success']); ?>
                     <?php endif; ?>
                 </div>
 
