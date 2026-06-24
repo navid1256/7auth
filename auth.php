@@ -15,12 +15,18 @@ function sendVerificationToken(string $email): bool
 {
     if (!empty($_SESSION['hash'])) {
         deleteToken($_SESSION['hash']);
+        unset($_SESSION['hash']);
     }
 
     $tokenData = generateToken();
-    $_SESSION['hash'] = $tokenData['hash'];
 
-    return sendTokenByMail($email, $tokenData['token']);
+    if (sendTokenByMail($email, $tokenData['token'])) {
+        $_SESSION['hash'] = $tokenData['hash'];
+        return true;
+    }
+
+    deleteToken($tokenData['hash']);
+    return false;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -66,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setSuccessAndRedirect('Login successful! Check your email for the verification token.', 'auth.php?action=verify-email');
         }
 
-        setErrorAndRedirect('Login successful but email sending failed. Please try again later.', 'auth.php?action=login');
+        setErrorAndRedirect('Failed to send verification email. Please use Send Again.', 'auth.php?action=verify-email');
     }
 
     if ($action === 'resend') {
@@ -115,7 +121,11 @@ if (in_array($action, ['verify', 'verify-email'], true) && !empty($_SESSION['ema
 
     if (empty($_SESSION['hash']) || !isAliveToken($_SESSION['hash'])) {
         if (!sendVerificationToken($_SESSION['email'])) {
-            setErrorAndRedirect('Failed to send verification email. Please try again.', 'auth.php?action=login');
+            $_SESSION['error'] = 'Failed to send verification email. Please try again.';
+            unset($_SESSION['success']);
+        } else {
+            $_SESSION['success'] = $_SESSION['success'] ?? 'Verification token sent. Check your email.';
+            unset($_SESSION['error']);
         }
     }
 

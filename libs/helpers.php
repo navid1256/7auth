@@ -18,11 +18,13 @@ function redirect(string $url): void
 function setErrorAndRedirect(string $message, string $url): void
 {
     $_SESSION['error'] = $message;
+    unset($_SESSION['success']);
     redirect(site_url($url));
 }
 
 function setSuccessAndRedirect(string $message, string $url): void
 {
     $_SESSION['success'] = $message;
+    unset($_SESSION['error']);
     redirect(site_url($url));
 }

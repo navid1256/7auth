@@ -33,9 +33,8 @@
                                 <div class="alert alert-danger" role="alert">
                                     <?= htmlspecialchars($_SESSION['error']) ?>
                                 </div>
-                                <?php unset($_SESSION['error']); ?>
-                            <?php endif; ?>
-                            <?php if (!empty($_SESSION['success'])): ?>
+                                <?php unset($_SESSION['error'], $_SESSION['success']); ?>
+                            <?php elseif (!empty($_SESSION['success'])): ?>
                                 <div class="alert alert-success" role="alert">
                                     <?= htmlspecialchars($_SESSION['success']) ?>
                                 </div>

@@ -1,3 +1,14 @@
+<?php
+
+$userData = $userData ?? null;
+
+if (!$userData) {
+    redirect('auth.php?action=login');
+}
+
+$displayName = htmlspecialchars(($userData->name ?? '') ?: ($userData->email ?? 'User'));
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,7 +69,7 @@
             <?php unset($_SESSION['success']); ?>
         <?php endif; ?>
 
-        <h1>Welcome, <?= htmlspecialchars(($userData->name ?? '') ?: $userData->email) ?>!</h1>
+        <h1>Welcome, <?= $displayName ?>!</h1>
         <p>You are successfully logged in.</p>
         <div class="action-buttons">
             <a href="<?= site_url('logout.php') ?>" class="btn btn-outline-danger">
